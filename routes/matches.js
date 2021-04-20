@@ -72,8 +72,4 @@ router.delete('/:id', async (req, res) => {
     res.sendStatus(200)
 })
 
-// router.get('/winners', (req, res) => {
-//     res.send('test')
-// })
-
 module.exports = router;
