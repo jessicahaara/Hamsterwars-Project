@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
 
     if(snapshot.empty) {
         res.send([])
+        return
     }
 
     let items = []
@@ -43,7 +44,6 @@ router.get('/:id', async (req, res) => {
     res.send(data)
 
 })
-
 
 router.post('/', async (req, res) => {
     const obj = req.body
@@ -97,6 +97,10 @@ router.delete('/:id', async (req, res) => {
 
     await db.collection('hamsters').doc(id).delete()
     res.sendStatus(200)
+})
+
+router.get('/hej', (req, res) => {
+    res.send('hej')
 })
 
 module.exports = router

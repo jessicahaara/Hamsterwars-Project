@@ -7,6 +7,7 @@ const path = require('path');
 const PORT = 1111
 
 const hamsters = require('./routes/hamsters.js');
+const matches = require('./routes/matches.js');
 
 
 app.use((req, res, next) => {
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/hamsters', hamsters);
+app.use('/matches', matches);
 
 
 app.listen(PORT, (req,res) => {
