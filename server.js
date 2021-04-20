@@ -14,6 +14,7 @@ const random = require('./routes/random.js');
 const matchwinner = require('./routes/matchwinner.js');
 const winners = require('./routes/winners.js');
 const losers = require('./routes/losers.js');
+const defeated = require('./routes/defeated.js');
 
 
 app.use((req, res, next) => {
@@ -36,6 +37,7 @@ app.use('/random', random);
 app.use('/matchwinner', matchwinner);
 app.use('/winners', winners);
 app.use('/losers', losers);
+app.use('/defeated', defeated);
 
 
 app.listen(PORT, (req,res) => {
