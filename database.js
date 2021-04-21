@@ -119,7 +119,6 @@ const getOrderedCollection = async (coll, order, sorting, limit) => {
 }
 
 module.exports = {
-    getDatabase,
     getCollection,
     getDocById,
     postToCollection,
