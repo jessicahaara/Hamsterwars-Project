@@ -14,6 +14,7 @@ const matchwinner = require('./routes/matchwinner.js');
 const winners = require('./routes/winners.js');
 const losers = require('./routes/losers.js');
 const defeated = require('./routes/defeated.js');
+const score = require('./routes/score.js');
 
 
 app.use((req, res, next) => {
@@ -36,7 +37,7 @@ app.use('/matchwinner', matchwinner);
 app.use('/winners', winners);
 app.use('/losers', losers);
 app.use('/defeated', defeated);
-
+app.use('/score', score);
 
 app.listen(PORT, (req,res) => {
     console.log(`Server started at PORT: ${PORT}`);
