@@ -1,107 +1,50 @@
 const express = require('express');
 const router = express.Router();
 
-const getDatabase = require('../database.js');
-const db = getDatabase()
+const db = require('../database.js');
+const collection = db.getCollection('hamsters')
 
 router.get('/', async (req, res) => {
-
-    const collRef = db.collection('hamsters')
-    const snapshot = await collRef.get()
-
-
-    if(snapshot.empty) {
-        res.send([])
-        return
-    }
-
-    let items = []
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
+    const items = await collection
     res.send(items)
 })
 
+router.get('/random', async (req, res) => {
+    const items = await collection
+    const random = Math.floor(Math.random() * items.length)
+    res.send(items[random])
+})
+
 router.get('/:id', async (req, res) => {
-    const id = req.params.id
-    const docRef = await db.collection('hamsters').doc(id).get()
+    const response = await db.getDocById('hamsters', req.params.id)
 
-    if(!docRef.exists) {
-        res.sendStatus(404)
+    if(typeof response === 'number') {
+        res.sendStatus(response)
         return
     }
-
-    if(!id) {
-        res.sendStatus(400)
-        return
-    }
-
-    const data = docRef.data()
-    res.send(data)
-
+    res.send(response)
 })
 
 router.post('/', async (req, res) => {
-    const obj = req.body
+    const response = await db.postToCollection('hamsters', req.body)
 
-    if(obj.constructor === Object && Object.keys(obj).length === 0) {
-        res.sendStatus(400)
+    if(typeof response === 'number') {
+        res.sendStatus(response)
         return
     }
-
-    const docRef = await db.collection('hamsters').add(obj)
-    res.send(docRef.id)
+    res.send(response)
 })
 
 router.put('/:id', async (req, res) => {
-    const id = req.params.id
-    const obj = req.body
-    const docRef = await db.collection('hamsters').doc(id).get()
+    const response = await db.putToCollection('hamsters', req.params.id, req.body)
 
-    if(!docRef.exists) {
-        res.sendStatus(404)
-        return
-    }
-
-    if(!id) {
-        res.sendStatus(400)
-        return
-    }
-
-    if(obj.constructor === Object && Object.keys(obj).length === 0) {
-        res.sendStatus(400)
-        return
-    }
-
-    await db.collection('hamsters').doc(id).set(obj, {merge: true})
-    res.sendStatus(200)
+    res.sendStatus(response)
 })
 
 router.delete('/:id', async (req, res) => {
-    const id = req.params.id
-    const docRef = await db.collection('hamsters').doc(id).get()
+    const response = await db.deleteFromCollection('hamsters', req.params.id)
 
-    if(!docRef.exists) {
-        res.sendStatus(404)
-        return
-    }
-
-    if(!id) {
-        res.sendStatus(400)
-        return
-    }
-
-    await db.collection('hamsters').doc(id).delete()
-    res.sendStatus(200)
+    res.sendStatus(response)
 })
-
-router.get('/hej', (req, res) => {
-    res.send('hej')
-})
-
 
 module.exports = router

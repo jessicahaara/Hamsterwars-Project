@@ -1,75 +1,40 @@
 const express = require('express')
 const router = express.Router()
 
-const getDatabase = require('../database.js');
-const db = getDatabase()
+const db = require('../database.js');
 
 
 router.get('/', async (req, res) => {
-    const collRef = db.collection('matches')
-    const snapshot = await collRef.get()
-
-    if(snapshot.empty) {
-        res.send([])
-        return
-    }
-
-    let items = []
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
+    const items = await db.getCollection('matches')
 
     res.send(items)
 })
 
 
 router.get('/:id', async (req, res) => {
-    const id = req.params.id
-    const docRef = await db.collection('matches').doc(id).get()
+    const response = await db.getDocById('matches', req.params.id)
 
-    if(!docRef.exists) {
-        res.sendStatus(404)
+    if(typeof response === 'number') {
+        res.sendStatus(response)
         return
     }
-
-    if(!id) {
-        res.sendStatus(400)
-        return
-    }
-
-    res.send(docRef.data())
+    res.send(response)
 })
 
 router.post('/', async (req, res) => {
-    const obj = req.body
+    const response = await db.postToCollection('matches', req.body)
 
-    if(obj.constructor === Object && Object.keys(obj).length === 0) {
-        res.sendStatus(400)
+    if(typeof response === 'object') {
+        res.sendStatus(response)
+        return
     }
-
-    const docRef = await db.collection('matches').add(obj)
-    res.send(docRef.id)
+    res.send(response)
 })
 
 router.delete('/:id', async (req, res) => {
-    const id = req.params.id
-    const docRef = await db.collection('matches').doc(id).get()
+    const response = await db.deleteFromCollection('matches', req.params.id)
 
-    if(!docRef.exists) {
-        res.sendStatus(404)
-        return
-    }
-
-    if(!id) {
-        res.sendStatus(400)
-        return
-    }
-
-    await db.collection('matches').doc(id).delete()
-    res.sendStatus(200)
+    res.sendStatus(response)
 })
 
 module.exports = router;

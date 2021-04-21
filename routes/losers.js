@@ -1,27 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const getDatabase = require('../database.js');
-const db = getDatabase()
+const db = require('../database.js');
 
 router.get('/', async (req, res) => {
-    const collRef = db.collection('hamsters')
-    const snapshot = await collRef.orderBy('defeats', 'desc').limit(5).get()
+const response = await db.getOrderedCollection('hamsters', 'defeats', 'desc', 5)
 
-    if(snapshot.empty) {
-        res.send([])
-        return
-    }
-
-    let items = []
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
-    res.send(items)
+res.send(response)
 })
 
 module.exports = router

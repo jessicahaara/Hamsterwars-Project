@@ -10,7 +10,6 @@ const staticFolder = path.join(__dirname, 'static')
 
 const hamsters = require('./routes/hamsters.js');
 const matches = require('./routes/matches.js');
-const random = require('./routes/random.js');
 const matchwinner = require('./routes/matchwinner.js');
 const winners = require('./routes/winners.js');
 const losers = require('./routes/losers.js');
@@ -33,7 +32,6 @@ app.get('/', (req, res) => {
 
 app.use('/hamsters', hamsters);
 app.use('/matches', matches);
-app.use('/random', random);
 app.use('/matchwinner', matchwinner);
 app.use('/winners', winners);
 app.use('/losers', losers);

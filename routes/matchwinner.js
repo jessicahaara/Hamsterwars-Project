@@ -1,29 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const getDatabase = require('../database.js');
-const db = getDatabase()
-
+const db = require('../database.js');
 
 router.get('/:id', async (req, res) => {
-    const id = req.params.id
-    const collRef = db.collection('matches')
-    const snapshot = await collRef.where('winner', '==', id).get()
+    const response = await db.getFilteredCollection('matches', 'winnerId', '==', req.params.id)
 
-    if(snapshot.empty) {
-        res.send(404)
+    if(typeof response === 'number') {
+        res.sendStatus(response)
         return
     }
-
-    let items = []
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
-    res.send(items)
+    res.send(response)
 })
 
 module.exports = router
