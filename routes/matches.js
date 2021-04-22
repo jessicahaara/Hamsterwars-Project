@@ -7,6 +7,10 @@ const db = require('../database.js');
 router.get('/', async (req, res) => {
     const items = await db.getCollection('matches')
 
+    if(typeof response === 'number') {
+        res.sendStatus(response)
+        return
+    }
     res.send(items)
 })
 
@@ -22,13 +26,19 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const response = await db.postToCollection('matches', req.body)
+    const obj = req.body
+    if (!obj.winnerId || !obj.loserId) {
+        res.sendStatus(400)
+        return
+    }
+    const response = await db.postToCollection('matches', obj)
 
-    if(typeof response === 'object') {
+    if(typeof response === 'number') {
         res.sendStatus(response)
         return
     }
-    res.send({id: response})
+
+    res.send(response)
 })
 
 router.delete('/:id', async (req, res) => {

@@ -13,114 +13,142 @@ const getDatabase = () => {
 const db = getDatabase()
 
 const getCollection = async (coll) => {
-    const collRef = db.collection(coll)
-    const snapshot = await collRef.get()
+    try {
+        const collRef = db.collection(coll)
+        const snapshot = await collRef.get()
 
-    let items = []
+        let items = []
 
-    if(snapshot.empty) {
+        if(snapshot.empty) {
+            return items
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data()
+            data.id = doc.id
+            items.push(data)
+        });
+
         return items
+    } catch (error) {
+        return 500
     }
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
-    return items
 }
 
 const getDocById = async (coll, id) => {
-    const docRef = await db.collection(coll).doc(id).get()
-    if(!docRef.exists) {
-        return 404
+    try{
+        const docRef = await db.collection(coll).doc(id).get()
+        if(!docRef.exists) {
+            return 404
+        }
+        if(!id) {
+            return 400
+        }
+        const data = docRef.data()
+        return data
+    } catch (error) {
+        return 500
     }
-    if(!id) {
-        return 400
-    }
-    const data = docRef.data()
-    return data
 }
 
 const postToCollection = async (coll, obj) => {
-    if(obj.constructor === Object && Object.keys(obj).length === 0) {
-        return 400
-    }
+    try {
+        if(obj.constructor === Object && Object.keys(obj).length === 0) {
+            return 400
+        }
 
-    const docRef = await db.collection(coll).add(obj)
-    return docRef.id
+        const docRef = await db.collection(coll).add(obj)
+        return docRef.id
+    } catch (error) {
+        return 500
+    }
 }
 
 const putToCollection = async (coll, id, obj) => {
-    const docRef = await db.collection(coll).doc(id).get()
+    try{
+        const docRef = await db.collection(coll).doc(id).get()
 
-    if(!docRef.exists) {
-        return 404
+        if(!docRef.exists) {
+            return 404
+        }
+
+        if(!id || obj.constructor === Object && Object.keys(obj).length === 0) {
+            return 400
+        }
+
+        await db.collection(coll).doc(id).set(obj, {merge: true})
+        return 200
+    } catch (error) {
+        return 500
     }
-
-    if(!id || obj.constructor === Object && Object.keys(obj).length === 0) {
-        return 400
-    }
-
-    await db.collection(coll).doc(id).set(obj, {merge: true})
-    return 200
 }
 
 const deleteFromCollection = async (coll, id) => {
-    const docRef = await db.collection(coll).doc(id).get()
+    try {
+        const docRef = await db.collection(coll).doc(id).get()
 
-    if(!docRef.exists) {
-        return 404
-    }
+        if(!docRef.exists) {
+            return 404
+        }
 
-    if(!id) {
-        return 400
+        if(!id) {
+            return 400
+        }
+        await db.collection(coll).doc(id).delete()
+        return 200
+    } catch (error) {
+        return 500
     }
-    await db.collection(coll).doc(id).delete()
-    return 200
 }
 
 const getFilteredCollection = async (coll, field, op, value) => {
-    const collRef = db.collection(coll)
-    const snapshot = await collRef.where(field, op, value).get()
-    let items = []
+    try {
+        const collRef = db.collection(coll)
+        const snapshot = await collRef.where(field, op, value).get()
+        let items = []
 
-    if(snapshot.empty) {
-        return 404
+        if(snapshot.empty) {
+            return 404
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data()
+            data.id = doc.id
+            items.push(data)
+        });
+
+        return items
+    } catch (error) {
+        return 500
     }
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
-    return items
 }
 
 const getOrderedCollection = async (coll, order, sorting, limit) => {
-    const collRef = db.collection(coll)
-    let snapshot = null
-    if(limit === 'all') {
-        snapshot = await collRef.orderBy(order, sorting).get()
-    } else {
-        snapshot = await collRef.orderBy(order, sorting).limit(limit).get()
-    }
+    try {
+        const collRef = db.collection(coll)
+        let snapshot = null
+        if(limit === 'all') {
+            snapshot = await collRef.orderBy(order, sorting).get()
+        } else {
+            snapshot = await collRef.orderBy(order, sorting).limit(limit).get()
+        }
 
-    let items = []
+        let items = []
 
-    if(snapshot.empty) {
+        if(snapshot.empty) {
+            return items
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data()
+            data.id = doc.id
+            items.push(data)
+        });
+
         return items
+    } catch (error) {
+        return 500
     }
-
-    snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        items.push(data)
-    });
-
-    return items
 }
 
 module.exports = {

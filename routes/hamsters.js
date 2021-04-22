@@ -26,7 +26,13 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const response = await db.postToCollection('hamsters', req.body)
+    const obj = req.body
+    if(!obj.name || typeof obj.age != 'number' || !obj.favFood || !obj.loves || !obj.imgName || typeof obj.wins != 'number' || typeof obj.defeats != 'number' || typeof obj.games != 'number') {
+        res.sendStatus(400)
+        return
+    }
+
+    const response = await db.postToCollection('hamsters', obj)
 
     if(typeof response === 'number') {
         res.sendStatus(response)
