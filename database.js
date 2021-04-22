@@ -101,8 +101,12 @@ const getFilteredCollection = async (coll, field, op, value) => {
 
 const getOrderedCollection = async (coll, order, sorting, limit) => {
     const collRef = db.collection(coll)
-        const snapshot = await collRef.orderBy(order, sorting).limit(limit).get()
-
+    let snapshot = null
+    if(limit === 'all') {
+        snapshot = await collRef.orderBy(order, sorting).get()
+    } else {
+        snapshot = await collRef.orderBy(order, sorting).limit(limit).get()
+    }
 
     let items = []
 

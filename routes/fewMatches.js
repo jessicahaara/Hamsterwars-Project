@@ -4,13 +4,16 @@ const router = express.Router();
 const db = require('../database.js');
 
 router.get('/', async (req, res) => {
-    const response = await db.getOrderedCollection('hamsters', 'games', 'asc', 10)
+    const response = await db.getOrderedCollection('hamsters', 'games', 'asc', 'all')
 
     const hamsters = []
 
-    response.forEach(hamster => {
-        hamsters.push(hamster.id)
-    });
+    for (var i = 0; i < response.length; i++) {
+        hamsters.push(response[i])
+        if(response[i].games != response[i+1].games) {
+            break
+        }
+    }
 
     res.send(hamsters)
 })

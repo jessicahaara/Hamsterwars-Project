@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
         res.sendStatus(response)
         return
     }
-    res.send(response)
+    res.send({id: response})
 })
 
 router.put('/:id', async (req, res) => {
