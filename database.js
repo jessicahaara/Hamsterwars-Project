@@ -37,13 +37,15 @@ const getCollection = async (coll) => {
 
 const getDocById = async (coll, id) => {
     try{
+        if(!id) {
+            return 400
+        }
+
         const docRef = await db.collection(coll).doc(id).get()
         if(!docRef.exists) {
             return 404
         }
-        if(!id) {
-            return 400
-        }
+
         const data = docRef.data()
         return data
     } catch (error) {
@@ -53,7 +55,7 @@ const getDocById = async (coll, id) => {
 
 const postToCollection = async (coll, obj) => {
     try {
-        if(obj.constructor === Object && Object.keys(obj).length === 0) {
+        if(Object.keys(obj).length === 0) {
             return 400
         }
 
@@ -66,14 +68,16 @@ const postToCollection = async (coll, obj) => {
 
 const putToCollection = async (coll, id, obj) => {
     try{
-        const docRef = await db.collection(coll).doc(id).get()
-
-        if(!docRef.exists) {
-            return 404
+        if(Object.keys(obj).length === 0) {
+            return 400
+        }
+        if(!id) {
+            return 400
         }
 
-        if(!id || obj.constructor === Object && Object.keys(obj).length === 0) {
-            return 400
+        const docRef = await db.collection(coll).doc(id).get()
+        if(!docRef.exists) {
+            return 404
         }
 
         await db.collection(coll).doc(id).set(obj, {merge: true})
@@ -85,15 +89,16 @@ const putToCollection = async (coll, id, obj) => {
 
 const deleteFromCollection = async (coll, id) => {
     try {
+        if(!id) {
+            return 400
+        }
+
         const docRef = await db.collection(coll).doc(id).get()
 
         if(!docRef.exists) {
             return 404
         }
 
-        if(!id) {
-            return 400
-        }
         await db.collection(coll).doc(id).delete()
         return 200
     } catch (error) {
