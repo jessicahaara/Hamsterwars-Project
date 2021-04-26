@@ -1,6 +1,11 @@
 const admin = require('firebase-admin');
 
-const serviceAccount = require('./firestore_private_key.json')
+let privateKey;
+if( process.env.PRIVATE_KEY ) {
+	privateKey = JSON.parse(process.env.PRIVATE_KEY)
+} else {
+	privateKey = require('./firestore_private_key.json')
+}
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -17,11 +22,12 @@ const getCollection = async (coll) => {
         const collRef = db.collection(coll)
         const snapshot = await collRef.get()
 
-        let items = []
+
 
         if(snapshot.empty) {
-            return items
+            return 404
         }
+        let items = []
 
         snapshot.forEach(doc => {
             const data = doc.data()

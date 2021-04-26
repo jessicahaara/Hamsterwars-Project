@@ -5,13 +5,13 @@ const db = require('../database.js');
 
 
 router.get('/', async (req, res) => {
-    const items = await db.getCollection('matches')
+    const response = await db.getCollection('matches')
 
     if(typeof response === 'number') {
         res.sendStatus(response)
         return
     }
-    res.send(items)
+    res.send(response)
 })
 
 
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
         return
     }
 
-    res.send(response)
+    res.send({id: response})
 })
 
 router.delete('/:id', async (req, res) => {

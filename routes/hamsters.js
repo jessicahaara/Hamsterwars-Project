@@ -5,8 +5,12 @@ const db = require('../database.js');
 const collection = db.getCollection('hamsters')
 
 router.get('/', async (req, res) => {
-    const items = await collection
-    res.send(items)
+    const response = await collection
+    if(typeof response === 'number') {
+        res.sendStatus(response)
+        return
+    }
+    res.send(response)
 })
 
 router.get('/random', async (req, res) => {
