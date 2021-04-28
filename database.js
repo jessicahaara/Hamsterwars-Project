@@ -53,6 +53,7 @@ const getDocById = async (coll, id) => {
         }
 
         const data = docRef.data()
+        data.id = docRef.id
         return data
     } catch (error) {
         return 500
